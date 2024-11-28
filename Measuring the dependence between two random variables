@@ -1,0 +1,27 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Plot two-dimensional histogram of sample data
+d2 = np.load('data2.pkl')
+x1 = d2[1]
+y1 = d2[2]
+nx1y1 = np.histogram2d(x1, y1, (10, 10))
+
+# Define conditional entropy
+def Hyx(Px, Pxy):
+    ce = 0
+    for px, pxy in zip(Px, Pxy):
+        if px == 0:
+            ce += 0
+        else:
+            ce += pxy*np.log2(px/pxy)
+    print (ce)
+
+# Plot 
+P1xy = ()
+P1x1y = np.sum(nx1y1(0))
+P1xy = P1xy.append(P1x1y)
+
+plt.plot(Hyx(x1, P1xy))
+plt.title(‘%f Mutual Information of the First Group’ %(P1xy(-1), len(x1)))
+plt.show()
