@@ -1,0 +1,12 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def correlation_coefficient(x, y):
+    A = 0
+    B = 0
+    # Let x and y loop simultaneously
+    for i, j in zip(x, y):
+        A += (i - np.mean(x))*(j - np.mean(y))
+        B += (i - np.mean(x))**2*(j - np.mean(y))**2
+        C = A/np.squt(B)
+    return C
