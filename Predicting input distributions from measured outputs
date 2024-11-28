@@ -1,0 +1,31 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Estimate the probability of the activated output for three data sets with the same time scale
+d31 = np.loadtxt('data1.txt')
+d32 = np.loadtxt('data2.txt')
+d33 = np.loadtxt('data3.txt')
+t = d31[:, 0]
+output1 = d31[:, 1]
+output2 = d32[:, 1]
+output3 = d33[:, 1]
+d3 = np.concatenate((t, output1, output2, output3), axis = 1)
+d3.sort()
+d3_min = d3[0]
+d3_max = d3[-1]
+np.histogram(d3)
+s1 = sum(output1)
+s2 = sum(output2)
+s3 = sum(output3)
+plt.bar(t, output1, t, output2, t, output3)
+plt.show()
+
+# Alternative definition of mutual information H(Y|X)
+def mutual_information(Px, Pxy):
+    mi = 0
+    for px, pxy in zip(Px, Pxy):
+        if px == 0:
+            mi += 0
+        else:
+            mi -= px*pxy*np.log2(pxy)
+    print (mi)
