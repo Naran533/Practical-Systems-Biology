@@ -1,0 +1,12 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def H(P): 
+    e = 0
+    for p in P:
+        # Entropy = 0 if x = 0
+        if p == 0:
+            e += 0
+        else: 
+            e += -p*np.log2(p)
+        print (e)
