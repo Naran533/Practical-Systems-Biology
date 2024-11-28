@@ -10,3 +10,20 @@ def H(P):
         else: 
             e += -p*np.log2(p)
         print (e)
+
+
+# Plot sample data of entropy distribution in a year
+d1 = np.load('data1.pkl')
+P1 = d1[1]
+y1 = zeros(len(P1))
+for i in xrange(len(P1)):
+    y1[i] = H(P1[i])
+# Create a bar figure
+pic1 = plt.bar(P1, y1, width = 0.50, align = 'center')
+plt.title(‘%f Entropy in %d Distribution of the Event’ %(y1[-1], len(P1)))
+plt.legend((pic1),('Entropy Didtribution’))
+plt.xlable('Month')
+plt.ylable('Sum Entropy')
+plt.xticks((P1), ('J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'))
+lable(pic1)
+plt.show()
