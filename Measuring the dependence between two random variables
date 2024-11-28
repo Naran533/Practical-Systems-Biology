@@ -23,5 +23,5 @@ P1x1y = np.sum(nx1y1(0))
 P1xy = P1xy.append(P1x1y)
 
 plt.plot(Hyx(x1, P1xy))
-plt.title(‘%f Mutual Information of the First Group’ %(P1xy(-1), len(x1)))
+plt.title(‘%f Correlation Coefficient in %d Mutual Information of the First Group’ %(P1xy(-1), len(x1)))
 plt.show()
