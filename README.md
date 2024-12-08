@@ -1,1 +1,4 @@
-Practical Systems Biology exercise using Python at the University of Edinburgh
+Practical Systems Biology exercise
+
+Course organised by the University of Edinburgh
+Language: Python
