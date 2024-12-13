@@ -2,30 +2,74 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Estimate the probability of the activated output for three data sets with the same time scale
-d31 = np.loadtxt('data1.txt')
-d32 = np.loadtxt('data2.txt')
-d33 = np.loadtxt('data3.txt')
-t = d31[:, 0]
-output1 = d31[:, 1]
-output2 = d32[:, 1]
-output3 = d33[:, 1]
-d3 = np.concatenate((t, output1, output2, output3), axis = 1)
-d3.sort()
-d3_min = d3[0]
-d3_max = d3[-1]
-np.histogram(d3)
-s1 = sum(output1)
-s2 = sum(output2)
-s3 = sum(output3)
-plt.bar(t, output1, t, output2, t, output3)
-plt.show()
+d1 = np.loadtxt('data1.txt')
+d2 = np.loadtxt('data2.txt')
+d3 = np.loadtxt('data3.txt')
+
+output1 = d1[:, 1]
+output2 = d2[:, 1]
+output3 = d3[:, 1]
+d = np.concatenate((output1, output2, output3))
+d.sort()
+d_min = d[0]
+d_max = d[-1]
+
+# Creat a new list ranging from the minimum to the maximum of d
+AllData = []
+for i in range(int(d_min),int(d_max) + 1):
+    AllData.append(i)
+
+Bins = []
+for i in range(int(d_min),int(d_max) + 2): 
+    Bins.append(i)
+
+n1, t1 = np.histogram(output1, bins = Bins)
+n2, t2 = np.histogram(output2, bins = Bins)
+n3, t3 = np.histogram(output3, bins = Bins)
+
+p1 = n1 / float(sum(n1)) # Probability of data1
+p2 = n2 / float(sum(n2)) # Probability of data2
+p3 = n3 / float(sum(n3)) # Probability of data3
+
+plt.figure()
+plt.bar(AllData, p1, width = 0.33, color = 'red')
+plt.bar(AllData, p2, width = 0.33, color = 'blue')
+plt.bar(AllData, p3, width = 0.33, color = 'green')
+
 
 # Alternative definition of mutual information H(Y|X)
-def mutual_information(Px, Pxy):
-    mi = 0
-    for px, pxy in zip(Px, Pxy):
+def H(X, YX):
+    hyx = 0.0
+    for i in range(len(X)):
+        px = X[i]
         if px == 0:
-            mi += 0
+            hyx -= 0
         else:
-            mi -= px*pxy*np.log2(pxy)
-    print (mi)
+            for j in range(len(YX[i])):
+                if YX[i][j] != 0:
+                    hyx -= px * YX[i][j] * np.log2(YX[i][j])
+    return hyx
+
+def Py(X, Y):
+    py = np.dot(X, Y)
+    return py
+
+def Entropy(X):
+    ex = 0.0
+    for k in range(len(X)):
+        if X[k] == 0:
+            ex -= 0
+        else:
+            ex -= X[k] * np.log2(X[k])
+    return ex
+
+def mutural_information(X, Y):
+    mi = 0.0
+    hy = Entropy(Py(X, Y))
+    hy_givenx = H(X, Y)
+    mi = (hy - hy_givenx) / hy
+    return mi
+
+px = [0.1, 0.4, 0.5]
+py_givenx = [p1, p2, p3]
+print ( mutural_information(px, py_givenx) )
