@@ -14,12 +14,12 @@ def Toggle_switch(y, t, Iu, Iv, b = 2, n = 2):
     v = y[1]
     au = 10.0
     av = 9.0
+    # au and av are the maximun rate of expression for repressor 1 and 2
     K = 3.0
 
     dydt = np.empty(len(y))
     dydt[0] = -u + au/(1 + (v/(1 + Iv/K) ** n) ** b)
     dydt[1] = -v + av/(1 + (u/(1 + Iu/K) ** n) ** b)
-    # au and av are the maximun rate of expression for repressor 1 and 2
 
     return dydt
 
@@ -99,4 +99,38 @@ plt.ylim(-0.5, 10.5)
 plt.xlabel('Value of repressor 1')
 plt.ylabel('Value of repressor 2')
 plt.legend(loc = 'best', fontsize = 8, ncol = 3)
+plt.show()
+
+
+## Determine the bifurcation diagram
+def Toggle_switch_bifurcation(y, t, Iu, Iv, au, b = 2, n = 2):
+    u = y[0]
+    v = y[1]
+    av = 9.0
+    K = 3.0
+
+    dydt = np.empty(len(y))
+    dydt[0] = -u + au/(1 + (v/(1 + Iv/K) ** n) ** b)
+    dydt[1] = -v + av/(1 + (u/(1 + Iu/K) ** n) ** b)
+
+    return dydt
+
+init = [0, 0]
+t = np.arange(0, 200)
+Vau = np.concatenate( [np.linspace(0, 35), np.linspace(35, 0)] )
+# Increase and decrease the value of au
+Vu = []
+
+for i in range(len(Vau)):
+    y = odeint( Toggle_switch_bifurcation, init, t, args = (0, 0, Vau[i]) )
+    init[0] = y[-1, 0]
+    init[1] = y[-1, 1]
+    # Get the final values
+    Vu.append(init[0])
+
+plt.plot( Vau[0:36], Vu[0:36], label = 'Maximum rate of expression of repressor 1 - increasing' )
+plt.plot( Vau[35:len(Vau)], Vu[35:len(Vu)], label = 'Maximum rate of expression of repressor 1 - decreasing' )
+plt.title( 'Bifurcation Diagram of the Model System' )
+plt.xlabel( 'Value of Maximum Rate of Expression of Repressor 1' )
+plt.legend( loc = 0 )
 plt.show()
