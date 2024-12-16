@@ -2,3 +2,48 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 
+# A toggle switch
+
+def Toggle_switch(y, t, Iu, Iv, b = 2, n = 2):
+# The input (y) stands for the initial concentrations of u and v
+# (t) time
+# (Iu, Iv) value of inducers
+# (b) cooperativity of repression
+# and (n) cooperativity of inducer binding to repressors
+    u = y[0]
+    v = y[1]
+    au = 10.0
+    av = 9.0
+    K = 3.0
+
+    dydt = np.empty(len(y))
+    dydt[0] = -u + au/(1 + (v/(1 + Iv/K) ** n) ** b)
+    dydt[1] = -v + av/(1 + (u/(1 + Iu/K) ** n) ** b)
+
+    return dydt
+
+
+init = [0, 0]
+# Initial values of u and v
+
+t = [ np.arange(0, 50), np.arange(50, 100), np.arange(100, 150), np.arange(150, 200) ]
+# 4*50 time steps
+
+parameters = [ (100, 0), (0, 0), (0, 100), (0, 0) ]
+# Values of parameters, save the fixed value in tuples
+
+y = [np.empty(len(y)), np.empty(len(y)), np.empty(len(y)), np.empty(len(y))]
+# Save simulations in lists
+
+for i in range(4):
+    y[i] = odeint( Toggle_switch, init, t[i], args = parameters[i] )
+    init[0] = y[i][-1, 0]
+    init[1] = y[i][-1, 1]
+    # Get the final values of u and v from the former call to be the initial value of the next call
+
+plt.plot( np.concatenate(t), np.concatenate(y)[:, 0], label = 'Repressor 1' )
+plt.plot( np.concatenate(t), np.concatenate(y)[:, 1], label = 'Repressor 2' )
+plt.title( 'Toogle Switch Simulation (Hill numbers = 2)' )
+plt.xlabel( 'Time steps' )
+plt.legend( loc = 'best' )
+plt.show()
