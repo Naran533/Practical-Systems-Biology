@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 
-# A toggle switch
+## A toggle switch
 
 def Toggle_switch(y, t, Iu, Iv, b = 2, n = 2):
-# The input (y) stands for the initial concentrations of u and v
+# The input (y) stands for the initial concentrations of u (repressor 1) and v (repressor 2)
 # (t) time
 # (Iu, Iv) value of inducers
 # (b) cooperativity of repression
@@ -19,6 +19,7 @@ def Toggle_switch(y, t, Iu, Iv, b = 2, n = 2):
     dydt = np.empty(len(y))
     dydt[0] = -u + au/(1 + (v/(1 + Iv/K) ** n) ** b)
     dydt[1] = -v + av/(1 + (u/(1 + Iu/K) ** n) ** b)
+    # au and av are the maximun rate of expression for repressor 1 and 2
 
     return dydt
 
@@ -32,7 +33,7 @@ t = [ np.arange(0, 50), np.arange(50, 100), np.arange(100, 150), np.arange(150, 
 parameters = [ (100, 0), (0, 0), (0, 100), (0, 0) ]
 # Values of parameters, save the fixed value in tuples
 
-y = [np.empty(len(y)), np.empty(len(y)), np.empty(len(y)), np.empty(len(y))]
+y = [[0, 0], [0, 0], [0, 0], [0, 0]]
 # Save simulations in lists
 
 for i in range(4):
@@ -46,4 +47,56 @@ plt.plot( np.concatenate(t), np.concatenate(y)[:, 1], label = 'Repressor 2' )
 plt.title( 'Toogle Switch Simulation (Hill numbers = 2)' )
 plt.xlabel( 'Time steps' )
 plt.legend( loc = 'best' )
+plt.show()
+
+
+## Determine the nullclines
+nu = []
+nv = []
+au = 10.0
+av = 9.0
+b = 2
+
+# Test 10 initial conditions
+num = 10
+for i in range(num):
+    # When Iv = 0, u = au/(1 + v ** b)
+    nu.append(au/(1 + i ** b))
+    # When Iu = 0, v = av/(1 + u ** b)
+    nv.append(av/(1 + i ** b))
+
+# Get different random value for u and v
+u = np.random.uniform(0, 10, 10)
+v = np.random.uniform(0, 10, 10)
+
+# Mark the start and the end points
+marker1 = [0]
+marker2 = [199]
+
+# A plot with u on x-axis and v on y-axis
+plt.figure()
+plt.plot(nu, range(num), label = 'Trajectorie of repressor 1')
+plt.plot(range(num), nv, label = 'Trajectorie of repressor 2')
+
+# Plot random values
+y = []
+t = np.arange(0, 200)
+init = [None, None]
+
+for i in range(num):
+    init[0] = u[i]
+    init[1] = v[i]
+    y = odeint( Toggle_switch, init, t, args = (0, 0) )
+    X = y[:, 0]
+    Y = y[:, 1]
+    plt.plot( X, Y, label = 'u = %.1f, v = %.1f' %(u[i], v[i]), alpha = 0.5 )
+    plt.plot( X[marker1], Y[marker1], 'o' )
+    plt.plot( X[marker2], Y[marker2], '*' )
+
+plt.title('Trajectories of the toogle switch')
+plt.xlim(-0.5, 10.5)
+plt.ylim(-0.5, 10.5)
+plt.xlabel('Value of repressor 1')
+plt.ylabel('Value of repressor 2')
+plt.legend(loc = 'best', fontsize = 8, ncol = 3)
 plt.show()
