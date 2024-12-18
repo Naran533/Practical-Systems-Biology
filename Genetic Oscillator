@@ -1,0 +1,11 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import odeint
+
+## Simulate the trajectories of the third protein (p3) in a negative-feedback model
+# Fixed value: b and six different maximum rate of transcription values (a)
+# In the genetic oscillator model, inputs are:
+#   initial concentration of mRNA (mi)
+#   repressor encoded by mRNA (pi)
+#   time units (t)
+#   and ratio of mRNA to protein lifetimes (b)
