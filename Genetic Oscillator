@@ -9,3 +9,45 @@ from scipy.integrate import odeint
 #   repressor encoded by mRNA (pi)
 #   time units (t)
 #   and ratio of mRNA to protein lifetimes (b)
+
+def Oscillator(y, t, a, b = 10):
+    m1 = y[0]
+    m2 = y[1]
+    m3 = y[2]
+    p1 = y[3]
+    p2 = y[4]
+    p3 = y[5]
+
+    dydt = np.empty(len(y))
+    # Concentration of mRNA
+    dydt [0] = -m1 + (a / (1 + p3**2) )
+    dydt [1] = -m2 + (a / (1 + p1**2) )
+    dydt [2] = -m3 + (a / (1 + p2**2) )
+    # Concentration of protein
+    dydt [3] = -b * (p1 - m1)
+    dydt [4] = -b * (p2 - m2)
+    dydt [5] = -b * (p3 - m3)
+
+    return dydt
+
+# Set values of a
+av = np.arange(12, 18)
+# Set initial values of mRNA and protein
+init = [0, 0, 0, 0, 0, 1]
+t = np.arange(0, 200)
+
+for i in range(6):
+    y = odeint(Oscillator, init, t, args = (av[i], ))
+
+    # Print six graphs in one figure
+    plt.subplot(6, 1, i + 1)
+    plt.plot( t, y[:, 3], label = 'Protein 3' )
+    plt.title( 'a = %.1f' %(av[i]), fontsize = 10 )
+    plt.xlabel( 'Time Unit', fontsize = 7 )
+    plt.ylabel( 'Protein 3', fontsize = 7 )
+    plt.tick_params( axis = 'both', which = 'major', labelsize = 7)
+
+plt.suptitle( 'Protein 3 Trajectories for Different Values of a' )
+plt.show()
+
+
