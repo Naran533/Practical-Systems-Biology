@@ -51,3 +51,44 @@ plt.suptitle( 'Protein 3 Trajectories for Different Values of a' )
 plt.show()
 
 
+## Form a grid of a and b values to classify the behaviour as either oscillaroty or steady-state
+n = 10
+# Amount of data
+grid = np.zeros(shape = (n, n))
+# State of the system
+
+init = [0, 0, 0, 0, 0, 1]
+t = np.arange(0, 1000, 10)
+a = np.logspace(1.0, 3.0, num = n)
+b = np.logspace(-1.0, 3.0, num = n)
+
+for i in range(len(a)):
+# Set a on x-axis, loop each point
+    for j in range(len(b)):
+    # Set b on y-axis
+        y = odeint( Oscillator, init, t, args = (a[i], b[j]), mxstep = 10000 )
+        # Limit the number of max steps
+        v = abs( np.diff( y[-10:, 3] ) )
+        # Get the last 10 values and get the difference value (0, 1)
+        if all(v < 0.1):
+            grid[j, i] = 0
+        else:
+            grid[j, i] = 1
+            # Return TRUE (steady state) pf all the elements < 1
+
+A, B = np.meshgrid(a, b)
+# Matrix of a and b values
+
+fig = plt.figure( figsize = (7, 7) )
+# Assign two levels: 0, steady state; 1, oscillation
+# Plot all the contours of the minimum value
+plt.contourf( A, B, grid, levels = [0, 1], extend = 'min', colors = ('w', 'b') )
+plt.title( 'Bifurcation Diagram', fontsize = 15 )
+plt.xscale( 'log' )
+plt.yscale( 'log' )
+plt.xlabel( 'Maximum Number of mRNAs Transcribed per Unit Time' )
+plt.ylabel( 'Ratio of mRNA to Protein Lifetimes' )
+plt.colorbar( shrink = 0.7, extend = 'min' )
+
+plt.show(fig)
+fig.savefig( 'Classification the Behaviour of Oscillaroty and Steady-state' )
